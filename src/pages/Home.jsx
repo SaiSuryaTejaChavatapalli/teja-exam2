@@ -1,32 +1,34 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import questionnaireData from "../api/questionnaire.json";
+import "./Home.css";
+import questionnaireData from "../api/questionnaires.json";
 
-function HomePage() {
+function Home() {
   const [questionnaires, setQuestionnaires] = useState([]);
 
   useEffect(() => {
     // Set the questionnaires state using the data from the JSON file
     setQuestionnaires(questionnaireData);
   }, []);
-
+  console.log("Home Page Called");
   return (
-    <div>
+    <div className="home-container">
       <h1>Questionnaires</h1>
-      <ul>
+      <ul className="questions-container">
         {questionnaires.map((questionnaire) => (
-          <li key={questionnaire.id}>
+          <li key={questionnaire.id} className="question-container">
             <h2 data-testid={`title-${questionnaire.title}`}>
               {questionnaire.title}
             </h2>
             <p data-testid="questionnaire-number">
-              {questionnaire.questions} Questions
+              No. of Questions:-
+              {questionnaire.questions}
             </p>
             <Link
               to={`/questionnaire/${questionnaire.id}`}
               data-testid="attempt"
             >
-              Attempt
+              Attempt Quiz
             </Link>
           </li>
         ))}
@@ -35,4 +37,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default Home;

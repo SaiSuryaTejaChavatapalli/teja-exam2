@@ -1,43 +1,23 @@
-import { useState, useEffect } from "react";
-
-const Question = ({ question, handleAnswer, isAnswered }) => {
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [secondsLeft, setSecondsLeft] = useState(10);
-  const handleOptionChange = (event) => {
-    setSelectedOption(parseInt(event.target.value));
-  };
-
-  const handleOkClick = () => {
-    if (selectedOption !== null) {
-      handleAnswer(selectedOption);
-    }
-  };
-
-  useEffect(() => {
-    let intervalId;
-    if (!isAnswered) {
-      intervalId = setInterval(() => {
-        setSecondsLeft((secondsLeft) => secondsLeft - 1);
-      }, 1000);
-    }
-    return () => clearInterval(intervalId);
-  }, [isAnswered]);
-
-  useEffect(() => {
-    if (secondsLeft <= 0 && !isAnswered) {
-      handleAnswer(null);
-    }
-  }, [secondsLeft, isAnswered, handleAnswer]);
-
-  useEffect(() => {
-    setSelectedOption(null);
-    setSecondsLeft(10);
-  }, [question]);
-
+import React from "react";
+import "./Question.css";
+const Question = (props) => {
+  const {
+    questionIndex,
+    currentQuestion,
+    selectedOption,
+    handleOptionChange,
+    handleOkClick,
+    handleNextClick,
+    isAnswered,
+    isCorrect,
+    nxtBtnDisabled,
+  } = props;
   return (
-    <div>
-      <h2 data-testid="question">{question.question}</h2>
-      <p>Time left: {secondsLeft} seconds</p>
+    <div className="question-container">
+      <h3>{questionIndex + 1}</h3>
+      <h3 data-testid="question" className="question-name">
+        {currentQuestion?.Question}
+      </h3>
       <form>
         <label>
           <input
@@ -47,7 +27,7 @@ const Question = ({ question, handleAnswer, isAnswered }) => {
             onChange={handleOptionChange}
             data-testid="option-1"
           />
-          {question.option1}
+          <span>{currentQuestion?.Option1}</span>
         </label>
         <br />
         <label>
@@ -58,7 +38,7 @@ const Question = ({ question, handleAnswer, isAnswered }) => {
             onChange={handleOptionChange}
             data-testid="option-2"
           />
-          {question.option2}
+          <span>{currentQuestion?.Option2}</span>
         </label>
         <br />
         <label>
@@ -69,7 +49,7 @@ const Question = ({ question, handleAnswer, isAnswered }) => {
             onChange={handleOptionChange}
             data-testid="option-3"
           />
-          {question.option3}
+          <span>{currentQuestion?.Option3}</span>
         </label>
         <br />
         <label>
@@ -80,12 +60,32 @@ const Question = ({ question, handleAnswer, isAnswered }) => {
             onChange={handleOptionChange}
             data-testid="option-4"
           />
-          {question.option4}
+          <span>{currentQuestion?.Option4}</span>
         </label>
       </form>
-      <button onClick={handleOkClick} disabled={isAnswered}>
-        Answer
-      </button>
+      <div className="button-container">
+        <button onClick={handleOkClick} data-testid="ok">
+          Ok
+        </button>
+        <button
+          onClick={handleNextClick}
+          data-testid="next"
+          disabled={nxtBtnDisabled}
+        >
+          Next
+        </button>
+      </div>
+
+      {isAnswered && (
+        <p
+          data-testid="validate-answer"
+          style={{ color: isCorrect ? "green" : "red" }}
+        >
+          {isCorrect
+            ? "Your Answer is correct"
+            : `Your Answer is wrong. Correct answer is ${currentQuestion?.Answer}`}
+        </p>
+      )}
     </div>
   );
 };
